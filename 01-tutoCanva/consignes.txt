@@ -1,0 +1,53 @@
+1. Créer les 3 fichiers html, css et js
+
+Ajouter une balise canvas avec l'id canvas1
+
+Cette balise a été intraduite dans html5 et sert à créer des dessins. PAr défaut le 
+fond est transparent
+
+Ajouter le css pour cet élément 
+
+2. Créer l'objet canvas dans le js et ctx avec le co,tect '2d'
+Observer dans la console les propriétés et prototypes: arc, fillStyle beginPath etc...
+- modifier fillStyle sur ctx
+- puis fillRect (4 arguments)
+Problème: ce n'est pas carré, et ce n'est pas responsive.
+
+3. Mofifier largeur et hauteur pour l'adapter à la fenêtre : c'est carré mais pas responsive
+Et mettre un eventListener pour adapter dynamiquement les dimensions
+Il faut ensuite mettre également le fillStyle et le fillRect, pour qu'il soit retracé à chauque
+évennement resize.
+
+4. Supprimer Rect et utiliser Arc
+Arc nécessite d'abord de créer un path (beginPath)
+beginPath permet à canvas de comprendre qu'on va faire un nouveau dessin
+
+5. créer un objet mouse avec les propriétés x et y
+- ajouter un évennement click sur le canvas, mettre l'event dans la fonction, et associer 
+la position du click aux propriété de l'objet mouse
+Puis dans la meme fonction, tracer un cercle
+Créer une fonction drawCircle pour simplifier le code
+
+6. Créer un autre eventlistener de type mouseMouve
+
+7. Au lieu d'utiliser un eventListener, on peut utiliser la fonction requestAnimationFrame
+REMARQUE: on a quand meme besoin du eventListener pour les coordonnées x et y
+Créer une foncrion animate. On va utiliser la fonction requestAnimationFrame pour rappeler
+a l'intérieur la fonction animate, et ainsi créer une boucle infinie 
+
+8. Création d'une collection d'objet Particule, avec chacun sa taille et sa position
+Nous allons d'abord créer une Classe Particule
+et un constructeur, pour donner des propriétés aux objets particules que nous créerons.
+Nous avons besoin des propiété: x et y, size, et speedX, speedY pour créer un vecteur de direction
+- Nous allons maintenant créer des méthode pour modifier les propriétées des particules
+  et pouvoir les tracer: update() et draw()
+  Dans draw, nous allons utiliser le code de drawCircle, puis supprimer ou commenter cette fonction
+- Maintenant que la classe est prete, nous pouvons créer autant d'objets que nous voulons
+avec une fonction createParticules par exemple. Nous stockerons ces particules dans const
+particlesArray = []
+- nous allons maintenant tracer ces particules à l'aide d'une fonction, par exemple
+handleParticule
+- et appeler cette fonction dans la fonction animate
+- le tableau de particules est crée une seule fois, avant que la souri ne bouge. Nous allons
+    donc plutôt ajouter cette fonction dans le  click ou le mouseMouve event
+9. Nous avons maintenant une base pour créer des paricules

@@ -1,0 +1,20 @@
+Reprendre le code 02.particules-bases
+On va faire réduire la taille des particules (ligne 70: if(this.size >0.2) this.size-= 0.1
+), on évite l'erreur de taille négative
+
+Création de trainées:
+Dans la fonction animate, plutot que de tout efface avec clearRec, on va mettre la couleur du
+background avec une transparence, puis tracer un rectangle sur l'écran, c'est l'accumulation de ces tranparences 
+qui fini par faire disparaitre les traces.
+
+Creation de couleurs aléatoire.
+création d'une variable hue, qui va servir à stocker le code couleur.
+Nb: la couleur hsl va de 0 à 360, le deuxième chiffre est la saturation et le troisieme
+l'intensite.
+on augmente la valeur de hue dans la fonction animate, et on applique cette valeurlors 
+de la création des particules.
+
+Création de lignes entre les particules
+_ supprimons les trainée et reprons le clearRect
+- dans animate, nous allons calculer la distance entre chaque particule et l'ensemble
+des particules suivantes
