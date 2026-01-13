@@ -13,7 +13,7 @@ let score = 0;
 function resizeCanvas() {
   const container = document.getElementById("container");
   const rect = container.getBoundingClientRect();
-  const size = Math.min(rect.width, rect.height * 0.8); // carré
+  const size = Math.min(rect.width, rect.height * 0.8) - 100; // carré
   canvas.width = size;
   canvas.height = size;
 
@@ -95,6 +95,7 @@ const snake = {
   direction: { x: 1, y: 0 }, // démarre vers la droite
   nextDirection: { x: 1, y: 0 }, // évite les demi-tours instantanés
   growing: false,
+  color: "green"
 };
 
 function moveSnake() {
@@ -133,10 +134,13 @@ function moveSnake() {
 }
 
 function drawSnake() {
-  ctx.fillStyle = "green";
 
-  snake.body.forEach((segment) => {
-    // ctx.fillRect(0, 0, 50, 50);
+  snake.body.forEach((segment, index) => {
+       if (index === 0) {
+      ctx.fillStyle = "brown"; // tête
+    } else {
+      ctx.fillStyle = snake.color; // corps
+    }
     ctx.fillRect(
       segment.x * TILE_SIZE,
       segment.y * TILE_SIZE,
@@ -222,13 +226,16 @@ function gameLoop(timestamp) {
   }
 
   if (gameState.pause && gameState.running) {
-    console.log("en pause");
     ctx.fillStyle = "white";
     ctx.font = "25px sans-serif";
     ctx.textAlign = "center";
     ctx.fillText("Press Space to play", canvas.width / 2, canvas.height / 1.5);
   } else {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
+ctx.fillStyle = "white";
+    ctx.font = "10px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Press Space to Pause", 60, 10);
     drawFoods();
     drawSnake();
   }
@@ -239,7 +246,7 @@ function gameLoop(timestamp) {
   }
 
   requestAnimationFrame(gameLoop); //le requestAnimationFrame passe automatiquement le timestamp à la fonction
-  
+
 }
 
 gameLoop();

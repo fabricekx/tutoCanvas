@@ -50,6 +50,10 @@ h2 {
 h1 {
     animation: monAnim2 10s infinite alternate;
 }
+
+h1 p { 
+  font: 1em sans-serif;
+}
 #startGame{   
     background: linear-gradient(black, blue, black);
     font-size: 40px;
