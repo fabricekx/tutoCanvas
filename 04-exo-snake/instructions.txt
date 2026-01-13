@@ -1,0 +1,60 @@
+1. création de food, qui va devoir nourir le serpent:
+
+D'abord le css
+
+Ce ne sera pas une div en dur dans le html, mais une div qui apparait et disparait
+grace à des fonctions js.
+
+Puis la fonction js
+Faire apparaitre le nourriture à différentes positions.
+Constater le décalage et résoudre le problème: index maximum 19.
+Autre problème: l'arène semble plus petite que sa div: c'est à cause des bordures qui ne sont
+pas prise en compte dans la taille.
+Solution: box-sizing : border-box sur l'arene et sur la food. Ajout de ridge sur border améliore un peu
+Problème, les border font quand meme partie de l'arene,
+Il vaut mieux placer l'arene dans un autre conteneur et mettre la bordure sur ce dernier
+
+Une fois ce problème réglé, il faut rendre l'apparition de la food aléatoire, avec la fonction
+random()
+
+On va maintenant appeler cette fonction spawnfood dans la fonction tick, par exemple tous les 
+5 ticks.
+On va utiliser l'opérateur modulo
+
+Il faut maintenant faire disparaitre les objets food après un certain temps
+Nous allons utuliser la fonction setTimeOut, qui permet d'appeler une fonction après un temps donné.
+Définir la variable globale foodTime = 5000 et ajouter le setTimeOut à la fonction spawnFood
+
+2. Création du serpent
+Très similaire à la foncion spawnfood
+On va créer un objet snake, avec pour l'intant la propriété tete.
+Nous auront par la suite besoin d'autres propriétés, comme la direction et la taille
+
+3. Mouvement du serpent.
+On va simplement ajouter une case dans une des 4 directions
+Les directions sont définies par un couple de valeurs x et y
+ca peut donc etre (0,1) pour aller vers le bas (0,-1) haut
+                (1,0) droite (-1,0) gauche
+Voir l'effet : deux problèmes, les tetes se multiplient et le mouvement ne s'arrete pas
+Il faut maintenant supprimer la tete précedente avant d'en ajouter une nouvelle
+en utilisant la fonction jQuerry remove
+
+Gestion des bord: on va créer une fonction teleport, pour translater la tete en cas 
+de bord
+
+Il va falloir maintenant que la direction du serpent soit définie par l'utilisateur, à travers le clavier
+Fournir le code de geeklib, puis faire les fonctions, et le mapping des touches
+
+4. Gestion contact tete et food.
+On va ajouter d'autres classes sur les div food et sur la tête du serpent, qui permettront
+de connaitre leur position x et y
+Puis en selectionnnant un élément du dom qui a pour class food et les coordonnées de la tete,
+nous renvoie un tableau d'un élément (et non vide): on mange
+
+5. Gestion de la taille du serpent
+On va retirer le .remove sur l'objet snake
+Au lieu de ca, on va retirer la classe snake-head et ajouter la classe snake-body
+Ne pas oublier de donner du style au snake-body
+Il va falloir maintenant supprimer certaines div snake-body en fonction de la taille
+Pour cela, on va ajouter également une class qui aura la valeur du stick au moment de sa création
+Puis supprimer les div snake-body qui corresponde à 

@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Snake Game</title>
+    <link rel="stylesheet" href="snake.css" />
+  </head>
+
+  <body>
+    <div id="gameCover">
+      <div id="gameIntro">
+        <h2>HUNGRY SNAKE</h2>
+        <p>Appuie sur le bouton pour démarrer</p>
+        <button id="startGame">Start Game</button>
+      </div>
+    </div>
+
+    <div id="container">
+      <h1>Hungry Snake</h1>
+       <div id="dashboard">
+        <div id="score">SCORE: <span></span></div>
+      </div>
+    
+ 
+      <canvas id="arenaWrapper">  </canvas>
+     
+     </div>
+    <!-- attention à l'ordre -->
+     <script src="gameState.js"></script>
+    <script src="snake.js"></script>
+    <script src="direction.js"></script>
+  </body>
+</html>
