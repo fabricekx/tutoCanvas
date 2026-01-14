@@ -1,0 +1,323 @@
+🧱 Architecture mentale du casse-briques
+Objets principaux
+
+La balle
+
+La raquette (paddle)
+
+Les briques
+
+Le score / vies
+
+L’état du jeu (pause, game over, win)
+
+Canvas est idéal ici.
+
+🧩 Étape 1 — Setup minimal
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
+
+function resizeCanvas() {
+  canvas.width = 600; // à rendre responsive
+  canvas.height = 400;
+}
+resizeCanvas();
+
+⚪ Étape 2 — La balle
+Modélisation
+const ball = {
+  x: canvas.width / 2,
+  y: canvas.height - 30,
+  radius: 8,
+  vx: 3,
+  vy: -3
+};
+
+Dessin
+function drawBall() {
+  ctx.beginPath();
+  ctx.arc(ball.x, ball.y, ball.radius, 0, Math.PI * 2);
+  ctx.fillStyle = "white";
+  ctx.fill();
+}
+
+Mouvement
+function updateBall() {
+  ball.x += ball.vx;
+  ball.y += ball.vy;
+}
+
+🧱 Étape 3 — Rebonds sur les murs
+function wallCollision() {
+  if (ball.x < ball.radius || ball.x > canvas.width - ball.radius) {
+    ball.vx *= -1;
+  }
+
+  if (ball.y < ball.radius) {
+    ball.vy *= -1;
+  }
+}
+
+
+(la perte de balle viendra plus tard)
+On peut déja texter ces 3 premiere fonctions dans une gameLoop avec requestAnimationFrame
+
+🟦 Étape 4 — La raquette
+const paddle = {
+  width: 80, // a rendre responsive
+  height: 12,
+  x: canvas.width / 2 - 40,
+  y: canvas.height - 20,
+  speed: 6
+};
+
+function drawPaddle() {
+  ctx.fillStyle = "white";
+  ctx.fillRect(paddle.x, paddle.y, paddle.width, paddle.height);
+}
+
+⌨️ Étape 5 — Contrôle clavier / souris
+let right = false;
+let left = false;
+
+window.addEventListener("keydown", e => {
+  if (e.key === "ArrowRight") right = true;
+  if (e.key === "ArrowLeft") left = true;
+});
+
+window.addEventListener("keyup", e => {
+  if (e.key === "ArrowRight") right = false;
+  if (e.key === "ArrowLeft") left = false;
+});
+
+function updatePaddle() {
+  if (right && paddle.x < canvas.width - paddle.width) {
+    paddle.x += paddle.speed;
+  }
+  if (left && paddle.x > 0) {
+    paddle.x -= paddle.speed;
+  }
+}
+
+⚽ Étape 6 — Collision balle / raquette
+function paddleCollision() {
+  if (
+    ball.y + ball.radius > paddle.y &&
+    ball.x > paddle.x &&
+    ball.x < paddle.x + paddle.width
+  ) {
+    ball.vy *= -1;
+    ball.y = paddle.y - ball.radius;
+  }
+}
+
+
+👉 Bonus plus tard : angle selon l’endroit touché.
+
+🧱 Étape 7 — Les briques
+Grille de briques
+const brick = {
+  rows: 5,
+  cols: 8,
+  width: 60,
+  height: 20,
+  padding: 10,
+  offsetTop: 40,
+  offsetLeft: 30
+};
+
+const bricks = [];
+
+for (let c = 0; c < brick.cols; c++) {
+  bricks[c] = [];
+  for (let r = 0; r < brick.rows; r++) {
+    bricks[c][r] = { x: 0, y: 0, alive: true };
+  }
+}
+
+Dessin
+function drawBricks() {
+  for (let c = 0; c < brick.cols; c++) {
+    for (let r = 0; r < brick.rows; r++) {
+      const b = bricks[c][r];
+      if (!b.alive) continue;
+
+      const x = c * (brick.width + brick.padding) + brick.offsetLeft;
+      const y = r * (brick.height + brick.padding) + brick.offsetTop;
+
+      b.x = x;
+      b.y = y;
+
+      ctx.fillStyle = "orange";
+      ctx.fillRect(x, y, brick.width, brick.height);
+    }
+  }
+}
+
+💥 Étape 8 — Collision balle / briques
+function brickCollision() {
+  for (let c = 0; c < brick.cols; c++) {
+    for (let r = 0; r < brick.rows; r++) {
+      const b = bricks[c][r];
+      if (!b.alive) continue;
+
+      if (
+        ball.x > b.x &&
+        ball.x < b.x + brick.width &&
+        ball.y > b.y &&
+        ball.y < b.y + brick.height
+      ) {
+        ball.vy *= -1;
+        b.alive = false;
+      }
+    }
+  }
+}
+
+🔁 Étape 9 — Game loop
+function gameLoop() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  updateBall();
+  updatePaddle();
+
+  wallCollision();
+  paddleCollision();
+  brickCollision();
+
+  drawBall();
+  drawPaddle();
+  drawBricks();
+
+  requestAnimationFrame(gameLoop);
+}
+
+gameLoop();
+
+
+
+Etape 10  Ajouter la pause avec la barre d’espace
+
+On va créer une variable pause globale, et basculer son état sur keydown :
+
+let pause = false;
+
+window.addEventListener("keydown", (e) => {
+  if (e.code === "Space") {
+    pause = !pause;
+  }
+});
+
+
+Dans ton gameLoop : (ou à mettre dans une fonction dédiée)
+
+function gameLoop() {
+  if (pause) {
+    // Dessiner le texte pause
+    ctx.fillStyle = "rgba(0,0,0,0.5)";
+    ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+    ctx.fillStyle = "white";
+    ctx.font = "30px sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("PAUSE", canvas.width/2, canvas.height/2);
+
+    requestAnimationFrame(gameLoop);
+    return;
+  }
+
+
+ 11 //// Définir les vies
+
+On va créer une variable globale :
+
+let lives = 3; // nombre de vies initial
+
+2️⃣ Affichage des vies
+
+On peut dessiner les vies en haut à gauche (ou à droite) du canvas dans ton gameLoop ou dans une fonction dédiée :
+
+function drawLives() {
+  ctx.fillStyle = "white";
+  ctx.font = "20px sans-serif";
+  ctx.textAlign = "left";
+  ctx.fillText("Lives: " + lives, 10, 30);
+}
+
+
+Ensuite, dans ton gameLoop, juste après ctx.clearRect :
+
+ctx.clearRect(0, 0, canvas.width, canvas.height);
+drawLives();
+
+3️⃣ Décrémenter les vies
+
+Il faut détecter quand la balle tombe en bas du canvas (raté par la raquette) :
+
+if (ball.y - ball.radius > canvas.height) { // balle hors du bas
+    lives--; // perte d'une vie
+    resetBallAndPaddle(); // fonction pour remettre la balle et la raquette au départ
+
+    if (lives <= 0) {
+        gameOver();
+    }
+}
+
+Fonction resetBallAndPaddle()
+function resetBallAndPaddle() {
+  // replacer la balle au centre
+  ball.x = canvas.width / 2;
+  ball.y = canvas.height - 60;
+  ball.vx = 4; // vitesse initiale
+  ball.vy = -4;
+
+  // replacer la raquette au centre
+  paddle.x = (canvas.width - paddle.width) / 2;
+}
+
+Fonction gameOver()
+function gameOver() {
+  pause = true; // ou gameState.running = false si tu veux gérer running
+  ctx.fillStyle = "rgba(0,0,0,0.7)";
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+  ctx.fillStyle = "white";
+  ctx.font = "40px sans-serif";
+  ctx.textAlign = "center";
+  ctx.fillText("GAME OVER", canvas.width / 2, canvas.height / 2);
+  ctx.font = "20px sans-serif";
+  ctx.fillText("Press Enter to restart", canvas.width / 2, canvas.height / 2 + 40);
+}
+
+4️⃣ Redémarrer le jeu avec Enter
+window.addEventListener("keydown", (e) => {
+  if (e.code === "Enter" && lives <= 0) {
+    lives = 3;
+    score = 0;
+    resetBallAndPaddle();
+    pause = false;
+    bricks.forEach(b => b.destroyed = false); // si tu marques les briques détruites
+  }
+});
+
+🚀 Étapes bonus (quand tu veux)
+
+angles réalistes sur la raquette
+
+vies
+
+niveaux
+
+briques à plusieurs coups
+
+power-ups
+
+pause / game over (DOM overlay 👌)
+
+🧠 Ce que tu vas vraiment apprendre avec ce jeu
+
+✔ collisions AABB
+✔ rebonds vectoriels
+✔ structure d’un moteur de jeu simple
+✔ séparation logique / rendu
+✔ timing (RAF vs setInterval)
