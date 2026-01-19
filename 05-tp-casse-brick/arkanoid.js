@@ -158,17 +158,16 @@ if (
 const brick = {
   rows: 5,
 //   cols: 10,
-cols: Math.floor(canvas.width/60),
-  width: Math.floor(canvas.width/20), // rendre dynamique, j'ai donc  10/20 
+cols: Math.floor(canvas.width/60), 
   height: 20,
-//   padding: 
+  // responsive: col = canvas/60, et space = 1/2 width et 60 = width+space= 3space
+  
   offsetTop: 40,
-  offsetLeft: 30
+  // offsetLeft: 30
 
 };
-
-brick.padding= (canvas.width + brick.offsetLeft - ((brick.cols * brick.width )))/ (2+brick.cols);
-
+brick.space = (canvas.width-canvas.width/60)/(3*brick.cols);
+brick.width= 2 * brick.space
 const bricks = [];
 
 for (let c = 0; c < brick.cols; c++) {
@@ -185,8 +184,8 @@ function drawBricks() {
       const b = bricks[c][r];
       if (!b.alive) continue;
 
-      const x = c * (brick.width + brick.padding) + brick.offsetLeft;
-      const y = r * (brick.height + brick.padding/3) + brick.offsetTop;
+      const x = c * (brick.width + brick.space) + brick.space;
+      const y = r * (brick.height + brick.space/3) + brick.offsetTop;
 
       b.x = x;
       b.y = y;
